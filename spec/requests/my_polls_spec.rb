@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::MyPollsController, type: :request do
 	describe "GET /polls" do
 		before :each do
-			FactoryGirl.create_list(:my_poll, 10)
+			FactoryGirl.create_list(:my_poll, 1)
 			get "/api/v1/polls"
 		end
 
@@ -55,9 +55,44 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 		context "invalid token" do
 			before :each do
 				token = FactoryGirl.create(:my_poll)
-				post = "/api/v1/polls"
+				post "/api/v1/polls"
 			end
+			it {
+				json = JSON.parse(response.body)
+				expect(json["status"]).to eq("unauthorized")
+			}
+		end
 
+		context "test invalid parameters" do
+			before :each do
+				@token = FactoryGirl.create(:token)
+				#puts "\n\n #{@token.inspect} \n\n"
+				post "/api/v1/polls", {token: @token.token, 
+					poll: {title: "hola mundo", 
+					#description: "Helloworlwithmorethan20letters",
+					expires_at:DateTime.now}}
+			end
+			it {have_http_status(422)}
+			it "errors" do
+				json = JSON.parse(response.body)
+				expect(json["errors"]).to_not be_empty
+			end
+		end
+	end
+
+	describe "PATCH /polls/:id" do
+		context "valid user token" do
+			before :each do	
+				@token = FactoryGirl.create(:token, expires_at: DateTime.now + 10.minutes)
+				@poll = FactoryGirl.create(:my_poll, @token.user)
+			end
+		end
+		context "token of user that does not create the poll" do
+			before :each do
+				@token = FactoryGirl.create(:token, expires_at: DateTime.now + 10.minutes)
+				@poll = FactoryGirl.create(:my_poll, user: FactoryGirl.create(:dummy_user))
+			end
+			it {have_http_status(200)}
 		end
 	end
 end

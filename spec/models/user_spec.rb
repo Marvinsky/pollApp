@@ -6,6 +6,7 @@ RSpec.describe User, type: :model do
 	it {should allow_value("nivramsky@gmail.com.com").for(:email)}
 	it {should validate_presence_of(:uid)}
 	it {should validate_presence_of(:provider)}
+	it {should validate_uniqueness_of(:email)}
 
 
 	it "should create an user if uid and provider does not exists" do
