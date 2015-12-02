@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::MyPollsController, type: :request do
 	describe "GET /polls" do
 		before :each do
-			FactoryGirl.create_list(:my_poll, 1)
+			FactoryGirl.create_list(:my_poll, 10)
 			get "/api/v1/polls"
 		end
 
@@ -104,6 +104,41 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 			end
 			it {expect(response).to have_http_status(401)}
 			it "update the poll will not work" do
+				json = JSON.parse(response.body)
+				expect(json["errors"]).to_not be_empty
+			end
+		end
+	end
+
+
+	describe "DELETE /polls/:id" do
+		context "valid user token" do
+			before :each do
+				@token = FactoryGirl.create(:token, expires_at: DateTime.now + 10.minutes)
+				@poll = FactoryGirl.create(:my_poll, user:@token.user)
+			end
+			it {
+				delete api_v1_poll_path(@poll), {token: @token.token}
+				expect(response).to have_http_status(200)
+			}
+
+			it "delete the poll" do
+				expect{
+					delete api_v1_poll_path(@poll), {token: @token.token}
+					json = JSON.parse(response.body)
+				}.to change(MyPoll, :count).by(-1)
+			end
+		end
+		context "token of user that does not create the poll" do
+			before :each do
+				@token = FactoryGirl.create(:token, expires_at: DateTime.now + 10.minutes)
+				@poll = FactoryGirl.create(:my_poll, user: FactoryGirl.create(:dummy_user))
+				delete api_v1_poll_path(@poll), {token: @token.token}
+
+			end
+			it {expect(response).to have_http_status(401)}
+			it "update the poll will not work" do
+				puts "\n\n -- #{response.body} -- \n\n"
 				json = JSON.parse(response.body)
 				expect(json["errors"]).to_not be_empty
 			end
