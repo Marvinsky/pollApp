@@ -20,6 +20,12 @@ class Api::V1::MyPollsController < ApplicationController
 	end
 
 	def update
+		if @poll.user == @current_user
+			@poll.update(my_polls_params)
+			render "api/v1/my_polls/show"
+		else
+			render json: {errors: "not authorized to modify the poll"}, status: :unauthorized
+		end
 	end
 
 	def destroy

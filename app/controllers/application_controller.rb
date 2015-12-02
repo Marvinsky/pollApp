@@ -8,10 +8,9 @@ class ApplicationController < ActionController::Base
 
   def authenticate
   	token_str = params[:token]
-  	token = Token.find_token(token_str) #Token.find_by(token: token_str)
-
+  	token = Token.find_by(token: token_str)
   	if token == nil || !token.is_valid?
-  		render json: {error: "Token is invalid", status: :unauthorized}
+  		render json: {error: "Token is invalid"}, status: :unauthorized
   	else
   		@current_user = token.user
   	end

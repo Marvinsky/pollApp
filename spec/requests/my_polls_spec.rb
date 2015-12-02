@@ -8,7 +8,7 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 		end
 
 
-		it {have_http_status(200)}
+		it {expect(response).to have_http_status(200)}
 		it "send to the list of polls" do
 			json = JSON.parse(response.body)
 			#puts "\n\n--- #{json} ---\n\n"
@@ -22,7 +22,7 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 			get "/api/v1/polls/#{@poll.id}"
 		end
 
-		it {have_http_status(200)}
+		it {expect(response).to have_http_status(200)}
 		it "should display the poll info" do
 			json = JSON.parse(response.body)
 			expect(json["id"]).to eq(@poll.id)
@@ -59,7 +59,7 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 			end
 			it {
 				json = JSON.parse(response.body)
-				expect(json["status"]).to eq("unauthorized")
+				expect(response).to have_http_status(401)
 			}
 		end
 
@@ -72,7 +72,7 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 					#description: "Helloworlwithmorethan20letters",
 					expires_at:DateTime.now}}
 			end
-			it {have_http_status(422)}
+			it {expect(response).to have_http_status(422)}
 			it "errors" do
 				json = JSON.parse(response.body)
 				expect(json["errors"]).to_not be_empty
@@ -82,17 +82,31 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 
 	describe "PATCH /polls/:id" do
 		context "valid user token" do
-			before :each do	
+			before :each do
 				@token = FactoryGirl.create(:token, expires_at: DateTime.now + 10.minutes)
-				@poll = FactoryGirl.create(:my_poll, @token.user)
+				@poll = FactoryGirl.create(:my_poll, user:@token.user)
+				patch api_v1_poll_path(@poll), {token: @token.token, poll: {title: "Nuevo titulo"}}
+			end
+			it {expect(response).to have_http_status(200)}
+
+			it "update the poll" do
+				json = JSON.parse(response.body)
+				#puts "\n\n -- #{json} -- \n\n"
+				expect(json["title"]).to eq("Nuevo titulo")
 			end
 		end
 		context "token of user that does not create the poll" do
 			before :each do
 				@token = FactoryGirl.create(:token, expires_at: DateTime.now + 10.minutes)
 				@poll = FactoryGirl.create(:my_poll, user: FactoryGirl.create(:dummy_user))
+				patch api_v1_poll_path(@poll), {token: @token.token, poll: {title: "Nuevo titulo2"}}
+
 			end
-			it {have_http_status(200)}
+			it {expect(response).to have_http_status(401)}
+			it "update the poll will not work" do
+				json = JSON.parse(response.body)
+				expect(json["errors"]).to_not be_empty
+			end
 		end
 	end
 end
