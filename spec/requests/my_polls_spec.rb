@@ -33,4 +33,31 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 			expect(json.keys).to contain_exactly("id","title","description","user_id","expires_at")
 		end
 	end
+
+	describe "POST /api/v1/polls" do
+		context "valid token" do
+			before :each do
+				@token = FactoryGirl.create(:token)
+				#puts "\n\n -- #{@token.inspect}  -- \n\n"
+				post "/api/v1/polls", {token: @token.token, poll: {title: "hola mundo", description: "Helloworlwithmorethan20letters",expires_at:DateTime.now}}
+			end
+			it {have_http_status(200)}
+			it "create new poll" do
+				expect {
+					post "/api/v1/polls", {token: @token.token, poll: {title: "hola mundo", description: "Helloworlwithmorethan20letters",expires_at:DateTime.now}}
+				}.to change(MyPoll, :count).by(1)
+			end
+			it "respons with the poll created" do
+				json = JSON.parse(response.body)
+				expect(json["title"]).to eq("hola mundo")
+			end
+		end
+		context "invalid token" do
+			before :each do
+				token = FactoryGirl.create(:my_poll)
+				post = "/api/v1/polls"
+			end
+
+		end
+	end
 end
