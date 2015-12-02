@@ -7,6 +7,10 @@ class Token < ActiveRecord::Base
     DateTime.now < self.expires_at
   end
 
+  def self.find_token(token_str)
+    Token.find_by(token: token_str)
+  end
+
   private
   def generate_token
   	begin

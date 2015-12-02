@@ -3,7 +3,8 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: "json"} do
     namespace :v1 do
-      resources :users
+      resources :users, only: [:create]
+      resources :polls, controller: "my_polls", except: [:new, :edit]
     end
     namespace :v2 do
       resources :users
