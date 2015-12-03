@@ -38,9 +38,40 @@ RSpec.describe Api::V1::AnswersController, type: :request do
 
 	describe "PATCH/PUT  /polls/:poll_id/questions/:answer_id" do
 		context "valid user token" do
+			before :each do
+				@answer = FactoryGirl.create(:answer, question:@question)
+				#puts "\n\nasdada -- #{@answer} -- \n\n"
+				put api_v1_poll_answer_path(@poll,@answer), {token: @token.token,answer: {description: "C++ Rocks"}}
+			end
+			it { expect(response).to have_http_status(200)}
+			it "update the description" do
+				#json = JSON.parse(response.body)
+				#expect(json["description"]).to eq("C++ Rocks")
+				@answer.reload
+				expect(@answer.description).to eq("C++ Rocks")
+			end
 		end
 	end
 
 	describe "DELETE /polls/:poll_id/questions/:answer_id" do
+		context "valid user token" do
+			before :each do
+				@answer = FactoryGirl.create(:answer, question:@question)
+			end
+			it {
+				delete api_v1_poll_answer_path(@poll,@answer), {token: @token.token}
+				expect(response).to have_http_status(200)
+			}
+			it "delete and display changed by -1" do
+				expect{
+					delete api_v1_poll_answer_path(@poll,@answer), {token: @token.token}
+				}.to change(Answer,:count).by(-1)
+			end
+			it "changed by 0 when no token is send" do
+				expect{
+					delete api_v1_poll_answer_path(@poll,@answer)
+				}.to change(Answer,:count).by(0)
+			end
+		end		
 	end
 end

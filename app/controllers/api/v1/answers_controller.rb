@@ -27,7 +27,7 @@ class Api::V1::AnswersController < ApplicationController
 	#DELETE /polls/1/questions/1
 	def destroy
 		@answer.destroy
-		render nothing: true
+		head :ok
 	end
 
 	private
