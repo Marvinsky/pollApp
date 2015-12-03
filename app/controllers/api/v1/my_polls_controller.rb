@@ -29,13 +29,6 @@ class Api::V1::MyPollsController < ApplicationController
 		@poll.destroy
 		render json: {message: "Poll selected deleted"}
 	end
-	
-	protected
-	def authenticate_owner(owner)
-		if owner != @current_user
-			render json: {errors: "Not authorized to delete poll"}, status: 401
-		end
-	end
 
 
 	private

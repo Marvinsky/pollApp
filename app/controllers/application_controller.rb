@@ -6,6 +6,8 @@ class ApplicationController < ActionController::Base
 
   #before_action :authenticate
 
+  protected
+
   def authenticate
   	token_str = params[:token]
   	token = Token.find_by(token: token_str)
@@ -15,4 +17,12 @@ class ApplicationController < ActionController::Base
   		@current_user = token.user
   	end
   end
+
+  def authenticate_owner(owner)
+    if owner != @current_user
+      render json: {errors: "Not authorized to use the resource poll"}, status: 401
+    end
+  end
+
+
 end
