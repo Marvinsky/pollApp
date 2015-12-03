@@ -28,7 +28,8 @@ RSpec.describe Api::V1::QuestionsController, type: :request do
 	describe "GET /polls/:poll_id/questions/:question_id" do
 		before :each do
 			@question = @poll.questions[0]
-			get "/api/v1/polls/#{@poll.id}/questions/#{@question.id}", {token: @token.token}
+			get api_v1_poll_question_path(@poll,@question)
+			#get "/api/v1/polls/#{@poll.id}/questions/#{@question.id}", {token: @token.token}
 		end
 
 		it {
@@ -37,6 +38,7 @@ RSpec.describe Api::V1::QuestionsController, type: :request do
 		it "should display the question info" do
 			json = JSON.parse(response.body)
 			expect(json["id"]).to eq(@question.id)
+			expect(json["description"]).to eq(@question.description)
 		end
 
 		it "should send the attributes of question" do
