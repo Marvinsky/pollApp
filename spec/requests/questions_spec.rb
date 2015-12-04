@@ -19,9 +19,9 @@ RSpec.describe Api::V1::QuestionsController, type: :request do
 		end
 
 		it "comes id and description" do
-			json_array = JSON.parse(response.body)
-			question = json_array[0]
-			expect(question.keys).to contain_exactly("id", "description")
+			#puts "\n\none  #{response.body}  \n\n"
+			json = JSON.parse(response.body)
+			expect(json["data"][0]["attributes"].keys).to contain_exactly("id", "description","created_at", "updated_at", "my_poll_id")
 		end
 	end
 
@@ -37,13 +37,13 @@ RSpec.describe Api::V1::QuestionsController, type: :request do
 		}
 		it "should display the question info" do
 			json = JSON.parse(response.body)
-			expect(json["id"]).to eq(@question.id)
-			expect(json["description"]).to eq(@question.description)
+			expect(json["data"]["attributes"]["id"]).to eq(@question.id)
+			expect(json["data"]["attributes"]["description"]).to eq(@question.description)
 		end
 
 		it "should send the attributes of question" do
 			json = JSON.parse(response.body)
-			expect(json.keys).to contain_exactly("id","description")
+			expect(json["data"]["attributes"].keys).to contain_exactly("id","description","my_poll_id","created_at","updated_at")
 		end
 	end
 
@@ -63,7 +63,7 @@ RSpec.describe Api::V1::QuestionsController, type: :request do
 			end
 			it "response the created question" do
 				json = JSON.parse(response.body)
-				expect(json["description"]).to eq("what is the year of the discovery of america?")
+				expect(json["data"]["attributes"]["description"]).to eq("what is the year of the discovery of america?")
 			end
 		end
 		context "invalid user" do
@@ -95,7 +95,7 @@ RSpec.describe Api::V1::QuestionsController, type: :request do
 			it "update the description" do
 				
 				json = JSON.parse(response.body)
-				expect(json["description"]).to eq("What is a triangle issoseless?")
+				expect(json["data"]["attributes"]["description"]).to eq("What is a triangle issoseless?")
 			end
 		end
 	end

@@ -31,7 +31,7 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 
 		it "should send the attributes of poll" do
 			json = JSON.parse(response.body)
-			expect(json["data"].keys).to contain_exactly("id","title","description","user_id","expires_at")
+			expect(json["data"]["attributes"].keys).to contain_exactly("id","title","description","user_id","expires_at", "created_at", "updated_at")
 		end
 	end
 
@@ -50,7 +50,7 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 			end
 			it "respons with the poll created" do
 				json = JSON.parse(response.body)
-				expect(json["data"]["title"]).to eq("hola mundo")
+				expect(json["data"]["attributes"]["title"]).to eq("hola mundo")
 			end
 		end
 		context "invalid token" do
@@ -94,7 +94,7 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 			it "update the poll" do
 				json = JSON.parse(response.body)
 				#puts "\n\n -- #{json} -- \n\n"
-				expect(json["data"]["title"]).to eq("Nuevo titulo")
+				expect(json["data"]["attributes"]["title"]).to eq("Nuevo titulo")
 			end
 		end
 		context "token of user that does not create the poll" do

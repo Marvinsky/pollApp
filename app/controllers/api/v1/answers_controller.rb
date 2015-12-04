@@ -4,6 +4,7 @@ class Api::V1::AnswersController < ApplicationController
 	before_action :set_poll, only: [:index, :create, :destroy]
 	before_action(only: [:destroy,:create]) {|controlador| controlador.authenticate_owner(@poll.user)}
 
+	layout "api/v1/application"
 
 	#POST /polls/1/questions
 	def create
