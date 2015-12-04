@@ -1,10 +1,8 @@
-class Api::V1::QuestionsController < ApplicationController
+class Api::V1::QuestionsController < Api::V1::MasterApiController
 	before_action :authenticate, except: [:index, :show]
 	before_action :set_questions, only: [:show, :update, :destroy]
 	before_action :set_poll, only: [:index, :create, :destroy]
 	before_action(only: [:destroy,:create]) {|controlador| controlador.authenticate_owner(@poll.user)}
-
-	layout "api/v1/application"
 
 	#GET /polls/1/questions
 	def index
