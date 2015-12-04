@@ -1,3 +1,4 @@
-json.array! @polls do |poll|
-	json.(poll,:id,:title,:description,:user_id,:expires_at)
-end
+json.partial! partial: "api/v1/resource", collection: @polls, as: :resource
+#json.array! @polls do |poll|
+	#json.partial! "api/v1/resource", resource: poll
+#end

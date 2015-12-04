@@ -59,7 +59,7 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 				post "/api/v1/polls"
 			end
 			it {
-				json = JSON.parse(response.body)
+				#puts "\n\n -- #{response.body} -- \n\n"
 				expect(response).to have_http_status(401)
 			}
 		end
@@ -74,7 +74,8 @@ RSpec.describe Api::V1::MyPollsController, type: :request do
 					expires_at:DateTime.now}}
 			end
 			it {expect(response).to have_http_status(422)}
-			it "errors" do
+			it "response errors" do
+				puts "\n\n -- #{response.body} -- \n\n"
 				json = JSON.parse(response.body)
 				expect(json["errors"]).to_not be_empty
 			end

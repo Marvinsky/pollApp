@@ -11,3 +11,10 @@ poll = MyPoll.create(title:"Programming language you prefer", description:"We wa
 					expires_at: DateTime.now + 1.year,user:user)
 question = Question.create(description: "Do you like the performance of your language programming?", my_poll:poll)
 answer = Answer.create(description: "a)",question:question)
+
+
+user2 = User.create(email:"nivramsky2@gmail.com", uid: "32dfwerew28uoja", provider:"twitter")
+poll2 = MyPoll.create(title:"Universal History", description:"What year america was discover?",
+					expires_at: DateTime.now + 1.year,user:user2)
+question2 = Question.create(description: "Where did the spanish arrived first?", my_poll:poll2)
+answer2 = Answer.create(description: "b)",question:question2)
