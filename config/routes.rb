@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'sessions/create'
+
   get 'welcome/index'
 
   get 'welcome/app'
@@ -18,5 +20,7 @@ Rails.application.routes.draw do
   end
 
   get "/", to: "welcome#index"
+
+  get "/auth/google_oauth2/callback", to: "sessions#create"
 
 end
