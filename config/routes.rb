@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  get "/", to: "welcome#index"
+  get 'welcome/index'
+
+  get 'welcome/app'
 
   namespace :api, defaults: {format: "json"} do
     namespace :v1 do
@@ -14,4 +16,7 @@ Rails.application.routes.draw do
       resources :users
     end
   end
+
+  get "/", to: "welcome#index"
+
 end
