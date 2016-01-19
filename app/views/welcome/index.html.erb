@@ -1,4 +1,8 @@
-<h1>welcome Developer</h1>
-<p>
-	<%= link_to "Click Aquí ", "/auth/google_oauth2" %> to log in with google account!
-</p>
+<% if user_signed_in? %>
+	<h1>Welcome <%= current_user.email %></h1>
+<% else %>
+	<h1>welcome Developer</h1>
+	<p>
+		<%= link_to "Click Aquí ", "/auth/google_oauth2" %> to log in with google account!
+	</p>
+<% end %>
